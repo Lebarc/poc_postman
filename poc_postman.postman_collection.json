@@ -87,6 +87,128 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Cadastro",
+			"item": [
+				{
+					"name": "Onboarding - Cadastrar 01",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//GERAR CPF",
+									"function gerarCpf() {",
+									"  const n1 = aleatorio(), n2 = aleatorio(), n3 = aleatorio(), d1 = dig(n1, n2, n3);",
+									"  return `${n1}${n2}${n3}${d1}${dig(n1, n2, n3, d1)}`;",
+									"}",
+									"",
+									"function dig(n1, n2, n3, n4) { ",
+									"  let nums = n1.split(\"\").concat(n2.split(\"\"), n3.split(\"\")), x = 0;    ",
+									"  if (n4 !== undefined) nums[9] = n4;",
+									"  for (let i = (n4 !== undefined ? 11:10), j = 0; i >= 2; i--, j++) x += parseInt(nums[j]) * i;",
+									"  return (y = x % 11) < 2 ? 0 : 11 - (y = x % 11); ",
+									"}",
+									"",
+									"const aleatorio = () => (\"\" + Math.floor(Math.random() * 999)).padStart(3, '0');",
+									"",
+									"pm.collectionVariables.set(\"cliente\", gerarCpf());"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody);",
+									"",
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Status code name has string\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 1000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"pm.test(\"Return correct name\", function () {",
+									"    pm.expect(responseJSON.name).to.eql(\"Leonardo Teste\");",
+									"});",
+									"",
+									"pm.test(\"Correct json attribute type\", () => {",
+									"    pm.expect(responseJSON.id).to.be.a('number')",
+									"    pm.expect(responseJSON.name).to.be.a('string')",
+									"    pm.expect(responseJSON.uuid).to.be.a('string')",
+									"    pm.expect(responseJSON.active).to.be.a('boolean')",
+									"    pm.expect(responseJSON.isLebes).to.be.a('boolean')",
+									"    pm.expect(responseJSON.step.accountUuid).to.be.a('string')",
+									"    pm.expect(responseJSON.step.stepName).to.be.a('string')",
+									"    pm.expect(responseJSON.biometry).to.be.a('boolean')",
+									"    pm.expect(responseJSON.blocked).to.be.a('boolean')",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Leonardo Teste\",\n    \"taxId\": \"{{cliente}}\",\n    \"deviceId\":\"5d4as6165a\",\n    \"ip\":\"192.168.1.1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}{{port8080}}{{pathPreOnboarding}}api/account/v1/accounts",
+							"host": [
+								"{{url}}{{port8080}}{{pathPreOnboarding}}api"
+							],
+							"path": [
+								"account",
+								"v1",
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "cliente",
+			"value": "0000"
 		}
 	]
 }
